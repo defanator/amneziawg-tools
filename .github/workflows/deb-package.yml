@@ -45,3 +45,9 @@ jobs:
           pwd
           ls -la
           make build-deb
+
+      - name: upload .deb packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.container}}-amneziawg-tools
+          path: ./dist/*.deb
