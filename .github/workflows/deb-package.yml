@@ -26,13 +26,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: show environment
-        run: make show-env
-
       - name: install dependencies
         run: |
           apt-get update
           apt-get install -y build-essential devscripts
+          make show-env
 
       - name: build deb package
         run: make build-deb
