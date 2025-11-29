@@ -42,8 +42,6 @@ jobs:
       - name: show environment
         run: |
           set -x
-          pwd
-          ls -la
           make show-env
           make export-env >> $GITHUB_ENV
 
