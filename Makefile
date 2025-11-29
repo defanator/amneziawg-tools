@@ -12,6 +12,8 @@ LONG_VERSION := $(shell git describe --tags --always --long --dirty)
 WHOAMI   := $(shell whoami)
 HOSTNAME := $(shell hostname -s)
 
+DISTRO := $(shell . /etc/os-release 2>/dev/null; printf "%s-%s" "$${ID}" "$${VERSION_ID}")
+
 help: ## Show help message (list targets)
 	@awk 'BEGIN {FS = ":.*##"; printf "\nTargets:\n"} /^[$$()% 0-9a-zA-Z_-]+:.*?##/ {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(SELF)
 
@@ -28,9 +30,22 @@ SHOW_ENV_VARS = \
 	VERSION \
 	LONG_VERSION \
 	WHOAMI \
-	HOSTNAME
+	HOSTNAME \
+	DISTRO
 
 show-env: $(addprefix show-var-, $(SHOW_ENV_VARS)) ## Show environment details
+
+export-var-%:
+	@{ \
+	escaped_v="$(subst ",\",$($*))" ; \
+	if [ -n "$$escaped_v" ]; then v="$$escaped_v"; else v="(undefined)"; fi; \
+	printf "%s=%s\n" "$*" "$$v"; \
+	}
+
+EXPORT_ENV_VARS = \
+	DISTRO
+
+export-env: $(addprefix export-var-, $(EXPORT_ENV_VARS)) ## Export environment
 
 update-version: ## Update version in sources
 	@{ \

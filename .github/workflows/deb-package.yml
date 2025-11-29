@@ -40,9 +40,7 @@ jobs:
           pwd
           ls -la
           make show-env
-          distro="${{ matrix.container }}"
-          distro="${distro//:/-}"
-          echo "DISTRO=${distro}" >> $GITHUB_ENV
+          make export-env >> $GITHUB_ENV
 
       - name: build deb package
         run: |
