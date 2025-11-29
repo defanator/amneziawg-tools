@@ -26,6 +26,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: show environment
+        run: make show-env
+
       - name: install dependencies
         run: |
           apt-get update
