@@ -36,18 +36,20 @@ jobs:
 
       - name: show environment
         run: |
+          set -x
           pwd
           ls -la
           make show-env
+          distro="${{ matrix.conatiner }}"
+          distro="${distro//:/-}"
+          echo "DISTRO=${distro}" >> $GITHUB_ENV
 
       - name: build deb package
         run: |
-          pwd
-          ls -la
           make build-deb
 
       - name: upload .deb packages
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.container}}-amneziawg-tools
+          name: ${{ env.DISTRO }}-amneziawg-tools
           path: ./dist/*.deb
