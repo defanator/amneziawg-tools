@@ -16,6 +16,7 @@ jobs:
       run: |
         apt -y update &&
         apt -y install build-essential &&
+        make update-version &&
         cd src &&
         make &&
         mkdir build &&
@@ -32,7 +33,7 @@ jobs:
     name: Build for Alpine
     runs-on: ubuntu-latest
     container:
-      image: alpine:3.19
+      image: alpine:3.21
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -40,6 +41,7 @@ jobs:
     - name: Build AmneziaWG tools
       run: |
         apk add linux-headers build-base &&
+        make update-version &&
         cd src &&
         make &&
         mkdir build &&
@@ -49,7 +51,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: alpine-3.19-amneziawg-tools
+        name: alpine-3.21-amneziawg-tools
         path: ./src/build
 
   GitHub-Release:
@@ -61,7 +63,7 @@ jobs:
           - os: "ubuntu"
             release: "22.04"
           - os: "alpine"
-            release: "3.19"
+            release: "3.21"
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
