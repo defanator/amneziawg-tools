@@ -1,0 +1,34 @@
+name: Build .deb packages
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-deb-package:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        container:
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - debian:bookworm
+
+    container:
+      image: ${{ matrix.container }}
+      options: --user root
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: install dependencies
+        run: |
+          apt-get update
+          apt-get install -y build-essential debuild
+
+      - name: build deb package
+        run: make build-deb
