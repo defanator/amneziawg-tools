@@ -10,12 +10,14 @@ jobs:
       image: ubuntu:22.04
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
 
     - name: Build AmneziaWG tools
       run: |
         apt -y update &&
-        apt -y install build-essential &&
+        apt -y install build-essential git &&
         make update-version &&
         cd src &&
         make &&
@@ -36,11 +38,13 @@ jobs:
       image: alpine:3.21
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
 
     - name: Build AmneziaWG tools
       run: |
-        apk add linux-headers build-base &&
+        apk add linux-headers build-base git &&
         make update-version &&
         cd src &&
         make &&
