@@ -30,7 +30,8 @@ jobs:
       - name: mark repository as safe
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
-      - uses: actions/checkout@v6
+      - name: checkout sources
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -43,11 +44,10 @@ jobs:
           make export-env >> $GITHUB_ENV
 
       - name: build deb package
-        run: |
-          make build-deb
+        run: make build-deb
 
       - name: upload .deb packages
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.DISTRO }}-amneziawg-tools
+          name: ${{ env.DISTRO }}-amneziawg-tools-debs
           path: ./dist/*.deb
