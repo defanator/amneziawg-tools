@@ -75,6 +75,14 @@ update-version: ## Update version in sources
 	sed -i -e 's,^Version:.*,Version: $(VERSION),' amneziawg-tools.spec ; \
 	}
 
+update-version-verbose: ## Update version with full build references
+	@{ \
+	echo "Detected verbose version: $(LONG_VERSION)" ; \
+	echo "RUN_URL: $(_RUN_URL)" ; \
+	sed -i -e 's,#define WIREGUARD_TOOLS_VERSION ".*,#define WIREGUARD_TOOLS_VERSION "$(LONG_VERSION)",' src/version.h ; \
+	sed -i -e 's, - https://amnezia.org, - $(_RUN_URL),' src/wg.c ; \
+	}
+
 build: update-version ## Build binary
 	$(MAKE) -C src
 
@@ -130,5 +138,5 @@ buildenv-%: ## Run building environment in a container
 .PHONY: clean
 clean: ## Clean up
 	rm -rf $(TOPDIR)/dist
-	git checkout src/version.h amneziawg-tools.spec
+	git checkout src/version.h src/wg.c amneziawg-tools.spec
 	$(MAKE) -C src clean

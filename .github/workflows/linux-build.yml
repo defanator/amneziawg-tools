@@ -24,7 +24,7 @@ jobs:
 
     - name: Build AmneziaWG tools
       run: |
-        make update-version &&
+        make update-version-verbose &&
         cd src &&
         make &&
         mkdir build &&
@@ -56,7 +56,7 @@ jobs:
 
     - name: Build AmneziaWG tools
       run: |
-        make update-version &&
+        make update-version-verbose &&
         cd src &&
         make &&
         mkdir build &&
