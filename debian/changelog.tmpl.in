@@ -1,0 +1,6 @@
+amneziawg (%%VERSION%%-1) %%CODENAME%%; urgency=medium
+
+  * automated build (%%LONG_VERSION%%)
+
+ -- %%USERNAME%% <%%USEREMAIL%%>  %%DATESTAMP%%
+
