@@ -98,6 +98,18 @@ build-deb: update-version dist/debuild/debian/changelog.orig ## Build .deb packa
 build-rpm: ## Build .rpm package
 	$(error not yet)
 
+builder-%: ## Create containerized builder
+	docker build \
+		-f $(TOPDIR)/containers/Containerfile.$* \
+		-t amneziawg-tools-builder:$* \
+		$(TOPDIR)/containers
+
+buildenv-%: ## Run building environment in a container
+	docker run --rm \
+		-v $(TOPDIR):/amneziawg-tools \
+		-ti amneziawg-tools-builder:$* \
+		bash
+
 .PHONY: clean
 clean: ## Clean up
 	rm -rf $(TOPDIR)/dist
