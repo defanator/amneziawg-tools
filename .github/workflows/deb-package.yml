@@ -30,6 +30,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          set-safe-directory: '*'
 
       - name: show environment
         run: |
