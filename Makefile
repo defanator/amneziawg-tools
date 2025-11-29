@@ -12,7 +12,8 @@ ifndef VERSION
 VERSION := $(shell git describe --tags --always --match='v[0-9]*' | cut -d '-' -f 1 | tr -d 'v')
 endif
 
-LONG_VERSION := $(shell git describe --tags --always --long --dirty)-$(GITHUB_RUN_ID)
+LONG_VERSION  := $(shell git describe --tags --always --long --dirty)-$(GITHUB_RUN_ID)
+_LONG_VERSION := $(shell echo "$(LONG_VERSION)" | sed 's/^v//')
 
 WHOAMI   := $(shell whoami)
 HOSTNAME := $(shell hostname -s)
@@ -46,6 +47,7 @@ SHOW_ENV_VARS = \
 	_RUN_URL \
 	VERSION \
 	LONG_VERSION \
+	_LONG_VERSION \
 	WHOAMI \
 	HOSTNAME \
 	OS \
@@ -79,11 +81,11 @@ update-version-verbose: ## Update version with full build references
 	@{ \
 	echo "Detected verbose version: $(LONG_VERSION)" ; \
 	echo "RUN_URL: $(_RUN_URL)" ; \
-	sed -i -e 's,#define WIREGUARD_TOOLS_VERSION ".*,#define WIREGUARD_TOOLS_VERSION "$(LONG_VERSION)",' src/version.h ; \
+	sed -i -e 's,#define WIREGUARD_TOOLS_VERSION ".*,#define WIREGUARD_TOOLS_VERSION "$(_LONG_VERSION)",' src/version.h ; \
 	sed -i -e 's, - https://amnezia.org, - $(_RUN_URL),' src/wg.c ; \
 	}
 
-build: update-version ## Build binary
+build: update-version-verbose ## Build binary
 	$(MAKE) -C src
 
 dist/debuild: update-version
