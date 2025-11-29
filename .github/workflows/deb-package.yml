@@ -1,4 +1,4 @@
-name: Build .deb packages
+name: Build deb packages
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-deb-package:
+  build-deb:
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
@@ -46,10 +46,10 @@ jobs:
           make show-env
           make export-env >> $GITHUB_ENV
 
-      - name: build deb package
+      - name: build deb packages
         run: make build-deb
 
-      - name: upload .deb packages
+      - name: upload deb packages
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.DISTRO }}-${{ env.DEB_BUILD_ARCH }}-amneziawg-tools-debs
