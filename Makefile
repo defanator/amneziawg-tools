@@ -3,11 +3,16 @@
 TOPDIR := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
 SELF   := $(abspath $(lastword $(MAKEFILE_LIST)))
 
+GITHUB_SERVER_URL ?= http://localhost
+GITHUB_REPOSITORY ?= amnezia-vpn/amneziawg-tools
+GITHUB_RUN_ID     ?= 0
+_RUN_URL          := $(GITHUB_SERVER_URL)/$(GITHUB_REPOSITORY)/actions/runs/$(GITHUB_RUN_ID)
+
 ifndef VERSION
 VERSION := $(shell git describe --tags --always --match='v[0-9]*' | cut -d '-' -f 1 | tr -d 'v')
 endif
 
-LONG_VERSION := $(shell git describe --tags --always --long --dirty)
+LONG_VERSION := $(shell git describe --tags --always --long --dirty)-$(GITHUB_RUN_ID)
 
 WHOAMI   := $(shell whoami)
 HOSTNAME := $(shell hostname -s)
@@ -37,6 +42,8 @@ show-var-%:
 SHOW_ENV_VARS = \
 	TOPDIR \
 	SELF \
+	GITHUB_RUN_ID \
+	_RUN_URL \
 	VERSION \
 	LONG_VERSION \
 	WHOAMI \
@@ -85,6 +92,7 @@ dist/debuild/debian/changelog.orig: dist/debuild
 	sed \
 		-e "s,%%VERSION%%,$(VERSION),g" \
 		-e "s,%%LONG_VERSION%%,$(LONG_VERSION),g" \
+		-e "s,%%RUN_URL%%,$(_RUN_URL),g" \
 		-e "s,%%CODENAME%%,$${VERSION_CODENAME},g" \
 		-e "s,%%USERNAME%%,$(WHOAMI),g" \
 		-e "s,%%USEREMAIL%%,$(WHOAMI)@$(HOSTNAME),g" \
@@ -102,6 +110,7 @@ dist/rpmbuild: update-version
 	mkdir -p $@/SOURCES
 	tar -czvf $@/SOURCES/v$(VERSION).tar.gz --transform 's|^|amneziawg-tools-$(VERSION)/|' src/ contrib/ README.md COPYING
 	cp amneziawg-tools.spec $@/SPECS/
+	sed -i -e "s,%changelog,%changelog\n* $$(date +"%a %b %d %Y") $(WHOAMI) <$(WHOAMI)@$(HOSTNAME)> - $(VERSION)\n- automated build ($(LONG_VERSION))\n- $(_RUN_URL)\n," $@/SPECS/amneziawg-tools.spec
 
 build-rpm: update-version dist/rpmbuild ## Build .rpm package
 	rpmbuild -D "_topdir $(TOPDIR)/dist/rpmbuild" -ba dist/rpmbuild/SPECS/amneziawg-tools.spec
