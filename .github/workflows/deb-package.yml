@@ -19,18 +19,25 @@ jobs:
 
     container:
       image: ${{ matrix.container }}
-      options: --user root
+      options: --user root --workdir /ci
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          path: /ci
 
       - name: install dependencies
         run: |
           apt-get update
           apt-get install -y build-essential devscripts
+
+      - name: show environment
+        run: |
+          cd /ci
           make show-env
 
       - name: build deb package
-        run: make build-deb
+        run: |
+          cd /ci
+          make build-deb
