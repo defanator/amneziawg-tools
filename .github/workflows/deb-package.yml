@@ -40,7 +40,7 @@ jobs:
           pwd
           ls -la
           make show-env
-          distro="${{ matrix.conatiner }}"
+          distro="${{ matrix.container }}"
           distro="${distro//:/-}"
           echo "DISTRO=${distro}" >> $GITHUB_ENV
 
