@@ -8,10 +8,13 @@ on:
 
 jobs:
   build-deb-package:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
         container:
           - ubuntu:22.04
           - ubuntu:24.04
