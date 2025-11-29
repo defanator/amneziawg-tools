@@ -9,6 +9,14 @@ jobs:
     container:
       image: ubuntu:22.04
     steps:
+    - name: install dependencies
+      run: |
+        apt-get update &&
+        apt-get install -y build-essential git
+
+    - name: mark repository as safe
+      run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
     - name: Checkout
       uses: actions/checkout@v6
       with:
@@ -16,8 +24,6 @@ jobs:
 
     - name: Build AmneziaWG tools
       run: |
-        apt -y update &&
-        apt -y install build-essential git &&
         make update-version &&
         cd src &&
         make &&
@@ -37,6 +43,12 @@ jobs:
     container:
       image: alpine:3.21
     steps:
+    - name: install dependencies
+      run: apk add linux-headers build-base git
+
+    - name: mark repository as safe
+      run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
     - name: Checkout
       uses: actions/checkout@v6
       with:
@@ -44,7 +56,6 @@ jobs:
 
     - name: Build AmneziaWG tools
       run: |
-        apk add linux-headers build-base git &&
         make update-version &&
         cd src &&
         make &&
