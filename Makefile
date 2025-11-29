@@ -65,12 +65,13 @@ update-version: ## Update version in sources
 	@{ \
 	echo "Detected version in Git: $(VERSION)" ; \
 	sed -i -e 's,#define WIREGUARD_TOOLS_VERSION ".*,#define WIREGUARD_TOOLS_VERSION "$(VERSION)",' src/version.h ; \
+	sed -i -e 's,^Version:.*,Version: $(VERSION),' amneziawg-tools.spec ; \
 	}
 
 build: update-version ## Build binary
 	$(MAKE) -C src
 
-dist/debuild:
+dist/debuild: update-version
 	mkdir -p $@
 	cp -r src $@/
 	cp -r debian $@/
@@ -92,11 +93,18 @@ dist/debuild/debian/changelog.orig: dist/debuild
 	cat $@ >>dist/debuild/debian/changelog ; \
 	}
 
-build-deb: update-version dist/debuild/debian/changelog.orig ## Build .deb package
+build-deb: dist/debuild/debian/changelog.orig ## Build .deb package
 	cd dist/debuild && debuild -b -uc -us
 
-build-rpm: ## Build .rpm package
-	$(error not yet)
+dist/rpmbuild: update-version
+	mkdir -p $@
+	mkdir -p $@/SPECS
+	mkdir -p $@/SOURCES
+	tar -czvf $@/SOURCES/v$(VERSION).tar.gz --transform 's|^|amneziawg-tools-$(VERSION)/|' src/ contrib/ README.md COPYING
+	cp amneziawg-tools.spec $@/SPECS/
+
+build-rpm: update-version dist/rpmbuild ## Build .rpm package
+	rpmbuild -D "_topdir $(TOPDIR)/dist/rpmbuild" -ba dist/rpmbuild/SPECS/amneziawg-tools.spec
 
 builder-%: ## Create containerized builder
 	docker build \
@@ -113,5 +121,5 @@ buildenv-%: ## Run building environment in a container
 .PHONY: clean
 clean: ## Clean up
 	rm -rf $(TOPDIR)/dist
-	git checkout src/version.h
+	git checkout src/version.h amneziawg-tools.spec
 	$(MAKE) -C src clean
