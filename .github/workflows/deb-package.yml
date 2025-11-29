@@ -19,13 +19,12 @@ jobs:
 
     container:
       image: ${{ matrix.container }}
-      options: --user root --workdir /ci
+      options: --user root
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          path: /ci
 
       - name: install dependencies
         run: |
@@ -34,10 +33,12 @@ jobs:
 
       - name: show environment
         run: |
-          cd /ci
+          pwd
+          ls -la
           make show-env
 
       - name: build deb package
         run: |
-          cd /ci
+          pwd
+          ls -la
           make build-deb
