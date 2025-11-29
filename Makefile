@@ -11,6 +11,16 @@ LONG_VERSION := $(shell git describe --tags --always --long --dirty)
 
 WHOAMI   := $(shell whoami)
 HOSTNAME := $(shell hostname -s)
+OS       := $(shell uname -s | tr '[:upper:]' '[:lower:]')
+OSARCH   := $(shell uname -m)
+
+ifeq ($(OSARCH),x86_64)
+DEB_BUILD_ARCH := amd64
+else ifeq ($(OSARCH),aarch64)
+DEB_BUILD_ARCH := arm64
+else
+ARCH := $(OSARCH)
+endif
 
 DISTRO := $(shell . /etc/os-release 2>/dev/null; printf "%s-%s" "$${ID}" "$${VERSION_ID}")
 
@@ -31,6 +41,9 @@ SHOW_ENV_VARS = \
 	LONG_VERSION \
 	WHOAMI \
 	HOSTNAME \
+	OS \
+	OSARCH \
+	DEB_BUILD_ARCH \
 	DISTRO
 
 show-env: $(addprefix show-var-, $(SHOW_ENV_VARS)) ## Show environment details
@@ -43,6 +56,7 @@ export-var-%:
 	}
 
 EXPORT_ENV_VARS = \
+	DEB_BUILD_ARCH \
 	DISTRO
 
 export-env: $(addprefix export-var-, $(EXPORT_ENV_VARS)) ## Export environment

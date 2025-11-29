@@ -49,5 +49,5 @@ jobs:
       - name: upload .deb packages
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.DISTRO }}-amneziawg-tools-debs
+          name: ${{ env.DISTRO }}-${{ env.DEB_BUILD_ARCH }}-amneziawg-tools-debs
           path: ./dist/*.deb
