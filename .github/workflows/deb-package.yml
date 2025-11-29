@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-deb:
-    name: build-deb @ ${{ matrix.container }} ${{ matrix.runner.arch }}
+    name: build-deb @ ${{ matrix.container }} ${{ contains(matrix.runner, 'arm') && 'arm64' || 'amd64' }}
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
