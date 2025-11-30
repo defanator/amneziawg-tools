@@ -65,6 +65,7 @@ export-var-%:
 	}
 
 EXPORT_ENV_VARS = \
+	OSARCH \
 	DEB_BUILD_ARCH \
 	DISTRO
 

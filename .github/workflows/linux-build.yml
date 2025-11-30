@@ -30,6 +30,8 @@ jobs:
 
     - name: Build AmneziaWG tools
       run: |
+        make show-env
+        make export-env >> $GITHUB_ENV
         make update-version-verbose &&
         cd src &&
         make &&
@@ -40,7 +42,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v5
       with:
-        name: ubuntu-22.04-${{ runner.arch }}-amneziawg-tools
+        name: ubuntu-22.04-${{ env.OSARCH }}-amneziawg-tools
         path: ./src/build
 
   Build-for-Alpine:
@@ -72,6 +74,8 @@ jobs:
 
     - name: Build AmneziaWG tools
       run: |
+        make show-env
+        make export-env >> $GITHUB_ENV
         make update-version-verbose &&
         cd src &&
         make &&
@@ -82,7 +86,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v5
       with:
-        name: alpine-3.21-${{ runner.arch }}-amneziawg-tools
+        name: alpine-3.21-${{ env.OSARCH }}-amneziawg-tools
         path: ./src/build
 
   GitHub-Release:
