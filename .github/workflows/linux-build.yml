@@ -56,7 +56,9 @@ jobs:
       image: alpine:3.21
     steps:
     - name: install dependencies
-      run: apk add linux-headers build-base git
+      run: |
+        apk add linux-headers build-base git gcompat
+        sed -i "s:ID=alpine:ID=NotpineForGHA:" /etc/os-release
 
     - name: mark repository as safe
       run: git config --global --add safe.directory $GITHUB_WORKSPACE
