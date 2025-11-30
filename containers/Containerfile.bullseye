@@ -1,0 +1,16 @@
+FROM docker.io/library/debian:bullseye-slim AS base
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+    build-essential \
+    devscripts \
+    debhelper \
+    git \
+    make \
+    pkg-config \
+    systemd \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /amneziawg-tools
+
+CMD make build-deb

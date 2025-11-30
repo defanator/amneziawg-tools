@@ -1,0 +1,7 @@
+FROM docker.io/library/rockylinux:8 AS base
+
+RUN dnf install -y make git gcc rpm-build systemd
+
+WORKDIR /amneziawg-tools
+
+CMD make build-rpm

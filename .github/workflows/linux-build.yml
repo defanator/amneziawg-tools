@@ -5,17 +5,34 @@ on: [push]
 jobs:
   Build-for-Ubuntu:
     name: Build for Ubuntu
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
     container:
       image: ubuntu:22.04
     steps:
+    - name: install dependencies
+      run: |
+        apt-get update &&
+        apt-get install -y build-essential git
+
+    - name: mark repository as safe
+      run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
 
     - name: Build AmneziaWG tools
       run: |
-        apt -y update &&
-        apt -y install build-essential &&
+        make show-env
+        make export-env >> $GITHUB_ENV
+        make update-version-verbose &&
         cd src &&
         make &&
         mkdir build &&
@@ -23,23 +40,43 @@ jobs:
         cp wg-quick/linux.bash ./build/awg-quick
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
-        name: ubuntu-22.04-amneziawg-tools
+        name: ubuntu-22.04-${{ env.OSARCH }}-amneziawg-tools
         path: ./src/build
 
   Build-for-Alpine:
     name: Build for Alpine
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          #- ubuntu-24.04-arm
     container:
-      image: alpine:3.19
+      image: alpine:3.21
     steps:
+    - name: install dependencies
+      run: apk add linux-headers build-base git
+
+    - name: mark repository as safe
+      run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
     - name: Checkout
-      uses: actions/checkout@v4
+      run: |
+        git clone ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} $GITHUB_WORKSPACE
+        cd $GITHUB_WORKSPACE
+        git checkout $GITHUB_SHA
+#      uses: actions/checkout@v6
+#      with:
+#        fetch-depth: 0
 
     - name: Build AmneziaWG tools
       run: |
-        apk add linux-headers build-base &&
+        make show-env
+        make export-env >> $GITHUB_ENV
+        make update-version-verbose &&
         cd src &&
         make &&
         mkdir build &&
@@ -47,9 +84,9 @@ jobs:
         cp wg-quick/linux.bash ./build/awg-quick
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
-        name: alpine-3.19-amneziawg-tools
+        name: alpine-3.21-${{ env.OSARCH }}-amneziawg-tools
         path: ./src/build
 
   GitHub-Release:
@@ -61,7 +98,7 @@ jobs:
           - os: "ubuntu"
             release: "22.04"
           - os: "alpine"
-            release: "3.19"
+            release: "3.21"
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
