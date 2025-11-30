@@ -47,6 +47,6 @@ jobs:
       - name: upload rpm packages
         uses: actions/upload-artifact@v4
         with:
-          name: amneziawg-tools-rpms-${{ env.DISTRO }}-${{ env.DEB_BUILD_ARCH }}
+          name: amneziawg-tools-rpms-${{ env.DISTRO }}-${{ env.OSARCH }}
           path: |
-            ./dist/rpmbuild/RPMS/*/*.rpm
+            ./dist/rpmbuild/RPMS/${{ env.OSARCH }}/*.rpm
