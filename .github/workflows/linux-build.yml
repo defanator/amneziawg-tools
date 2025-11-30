@@ -5,7 +5,13 @@ on: [push]
 jobs:
   Build-for-Ubuntu:
     name: Build for Ubuntu
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
     container:
       image: ubuntu:22.04
     steps:
@@ -34,12 +40,18 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ubuntu-22.04-amneziawg-tools
+        name: ubuntu-22.04-${{ runner.arch }}-amneziawg-tools
         path: ./src/build
 
   Build-for-Alpine:
     name: Build for Alpine
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
     container:
       image: alpine:3.21
     steps:
@@ -66,7 +78,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: alpine-3.21-amneziawg-tools
+        name: alpine-3.21-${{ runner.arch }}-amneziawg-tools
         path: ./src/build
 
   GitHub-Release:
