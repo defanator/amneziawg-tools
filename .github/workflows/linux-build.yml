@@ -38,7 +38,7 @@ jobs:
         cp wg-quick/linux.bash ./build/awg-quick
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: ubuntu-22.04-${{ runner.arch }}-amneziawg-tools
         path: ./src/build
@@ -80,7 +80,7 @@ jobs:
         cp wg-quick/linux.bash ./build/awg-quick
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: alpine-3.21-${{ runner.arch }}-amneziawg-tools
         path: ./src/build
